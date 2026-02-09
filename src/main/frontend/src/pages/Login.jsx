@@ -22,7 +22,7 @@ export default function Login() {
       setMessage(data)
     } catch (error) {
       console.error('Error logging in:', error)
-      setMessage('Login failed')
+      setMessage('Incorrect username or password')
     }
   }
 

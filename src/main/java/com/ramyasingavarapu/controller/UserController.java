@@ -1,5 +1,8 @@
 package com.ramyasingavarapu.controller;
 
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ramyasingavarapu.dto.error.ValidationError;
 import com.ramyasingavarapu.dto.request.UserLoginRequest;
 import com.ramyasingavarapu.dto.request.UserRegistrationRequest;
+import com.ramyasingavarapu.dto.response.UserRegistrationResponse;
 import com.ramyasingavarapu.entity.User;
 import com.ramyasingavarapu.repository.UserRepository;
 
@@ -38,13 +43,25 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody UserRegistrationRequest registrationRequest) {
+    public ResponseEntity registerUser(@RequestBody UserRegistrationRequest registrationRequest) {
+        Optional<User> existingUser = userRepository.findByUsername(registrationRequest.getUsername());
+
+        if (existingUser.isPresent())
+        {
+            ValidationError error = new ValidationError("username", "Username is already taken");
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(error);
+        }
+
         String encodedPassword = passwordEncoder.encode(registrationRequest.getPassword());
         User user = new User(registrationRequest.getUsername(), encodedPassword);
 
         userRepository.save(user);
 
-        return "User registered successfully";
+        UserRegistrationResponse response = new UserRegistrationResponse("User registered successfully");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")

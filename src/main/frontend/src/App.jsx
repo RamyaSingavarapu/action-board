@@ -12,11 +12,11 @@ import Boards from "./pages/Boards";
 function App() {
   return (
     <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Boards />} />
-        </Routes>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Boards />} />
+      </Routes>
     </Router>
   );
 }
